@@ -1,0 +1,26 @@
+version: "3.8"
+
+services:
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: appdb
+      POSTGRES_USER: appuser
+      POSTGRES_PASSWORD: securepass
+    volumes:
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
+
+  backend:
+    build: ./backend
+    environment:
+      DB_HOST: db
+      DB_USER: appuser
+      DB_PASSWORD: securepass
+      DB_NAME: appdb
+      JWT_SECRET: myjwtsecret
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
